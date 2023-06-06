@@ -37,15 +37,15 @@ class Graph:
     def __repr__(self):
         return "\n".join([item.__repr__() for item in self.edges.values()])
 
-    def _predecessors(self, item_id: int)-> Iterable[int]:
-        """Returns the predecessors of the corresponding edge. 
+    def predecessors(self, item_id: int) -> Iterable[int]:
+        """Returns the predecessors of the corresponding edge.
 
         Args:
             item_id (int): edge identifier to consider
 
         Returns:
             Iterable[int]: Iterable of edge identifier connected to the provided edge id inputs.
-        """        
+        """
         edge = self.edges[item_id]
         predecessors = []
         for in_node in edge.inputs:
@@ -53,8 +53,8 @@ class Graph:
 
         return predecessors
 
-    def successors(self, edge_id: int)->Iterable[int]:
-        """Returns the successors of the corresponding edge. 
+    def successors(self, edge_id: int) -> Iterable[int]:
+        """Returns the successors of the corresponding edge.
 
         Args:
             edge_id (int): edge identifier to consider
@@ -71,7 +71,7 @@ class Graph:
 
     def _adjust_ranking(self, item_id: int, priority, mode="forward"):
         self.edges[item_id].priority = priority
-        func = self.successors if mode == "forward" else self._predecessors
+        func = self.successors if mode == "forward" else self.predecessors
         offset = 1 if mode == "forward" else -1
 
         for neighbor_id in func(item_id):
@@ -94,7 +94,7 @@ class Graph:
         - Add the edge to lists accessible per node
         Args:
             edge (Edge): instance of Edge
-        """        
+        """
         item_id = edge.id
         self.edges[item_id] = edge
 
@@ -110,7 +110,8 @@ class Graph:
         Args:
             inputs (Iterable): node names as inputs
             outputs (Iterable): node names as outputs
-        """        
+        """
+
         def inner(function):
             item = Edge(inputs=inputs, outputs=outputs, function=function)
             self._register_internals(item)
